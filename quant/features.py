@@ -164,7 +164,7 @@ def sellStock(account:pykis.KisAccountScope, ticker, count, sellPrice=0):
     if sellPrice == 0: # 시장가
         return account.sell(ticker, qty=count, unpr=0, dvsn='시장가')
     else :
-        return account.buy(ticker, qty=count, unpr=sellPrice)
+        return account.sell(ticker, qty=count, unpr=sellPrice)
 
 
 
