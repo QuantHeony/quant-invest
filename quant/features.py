@@ -23,7 +23,7 @@ def adjustRebalancing(kis:PyKis, balance:KisAccountBalance, weightDict:Dict[str,
     ratioList = np.zeros(n) # 비율 계산 리스트
     countList = np.zeros(n) # 구매 개수 리스트
     totalPriceList = np.zeros(n) # 소모 금액
-    diffCountList = np.zeros(n) # 개수를 정수화 하면서 잃은 비율
+    diffRatioList = np.zeros(n) # 개수를 정수화 하면서 잃은 비율
     tickerList = sorted(list(weightDict.keys())) # ticker 리스트
     tickerIndexDict = defaultdict(str) # key : ticker -> val: tickerList index
     for idx, ticker in enumerate(tickerList):
@@ -40,13 +40,13 @@ def adjustRebalancing(kis:PyKis, balance:KisAccountBalance, weightDict:Dict[str,
         stock = kis.stock(str(ticker))
         price = stock.price().stck_prpr
         count = int(deposit * weightDict[ticker]["ratio"] / price)
-        diffCountList[i] = (deposit * weightDict[ticker]["ratio"] / price) - count
+        # diffCountList[i] = (deposit * weightDict[ticker]["ratio"] / price) - count
         priceInfo[i] = price
 
         countList[i] = count
         ratioList[i] = (count * price) / deposit
+        diffRatioList[i] = abs(weightDict[ticker]["ratio"] - ratioList[i])
         totalPriceList[i] = count * price
-
         totalResidual += abs(ratioList[i] - weightDict[ticker]["ratio"])
 
     bestCountList = copy.deepcopy(countList)
@@ -54,30 +54,31 @@ def adjustRebalancing(kis:PyKis, balance:KisAccountBalance, weightDict:Dict[str,
     bestTotalPriceList = copy.deepcopy(totalPriceList)
     bestDiff = deposit - sum(totalPriceList)
     bestTotalResidual = totalResidual
-    bestDiffCountList = diffCountList
+    bestDiffRatioList = diffRatioList
 
     while True:
-        toUpTickerIdx = np.argmax(bestDiffCountList)
+        toUpTickerIdx = np.argmax(bestDiffRatioList)
         tempDiff = priceInfo[toUpTickerIdx]
         if bestDiff > tempDiff :
             tempCountList = copy.deepcopy(bestCountList)
             tempCountList[toUpTickerIdx] += 1
             tempTotalPriceList = copy.deepcopy(totalPriceList)
             tempTotalPriceList[toUpTickerIdx] += priceInfo[toUpTickerIdx]
-
             tempSumPrice = sum(tempTotalPriceList)
             tempRatioList = np.zeros(n)
+            tempDiffRatioList = np.zeros(n)
             tempTotalResidual = 0
             for idx, ticker in enumerate(tickerList):
                 tempRatioList[idx] = tempTotalPriceList[idx]/tempSumPrice
-                tempTotalResidual += abs(tempRatioList[i] - weightDict[ticker]["ratio"])
+                tempTotalResidual += abs(tempRatioList[idx] - weightDict[ticker]["ratio"])
+                tempDiffRatioList[idx] = abs(weightDict[ticker]["ratio"] - tempRatioList[idx])
             if bestTotalResidual > tempTotalResidual:
                 bestCountList = copy.deepcopy(tempCountList)
                 bestRatioList = tempRatioList
                 bestDiff = bestDiff - tempDiff
                 bestTotalResidual = tempTotalResidual
                 bestTotalPriceList = tempTotalPriceList
-                bestDiffCountList[toUpTickerIdx] += 1
+                bestDiffRatioList = tempDiffRatioList
             else:
                 break
         else:
@@ -165,40 +166,3 @@ def sellStock(account:pykis.KisAccountScope, ticker, count, sellPrice=0):
         return account.sell(ticker, qty=count, unpr=0, dvsn='시장가')
     else :
         return account.sell(ticker, qty=count, unpr=sellPrice)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
