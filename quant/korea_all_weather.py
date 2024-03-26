@@ -81,7 +81,7 @@ if __name__ == "__main__":
     # 리밸런싱 수량 확인
     orderList = adjustRebalancing(kis, balance, KoreanAllWeather11To4)
 
-
+    # TODO. 주문시 체크!
     ORDER_FLAG = False
     # 먼저 팔고, 구매 한다.
     orderBuyList =[]

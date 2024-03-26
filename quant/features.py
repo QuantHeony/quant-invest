@@ -129,7 +129,7 @@ def adjustRebalancing(kis:PyKis, balance:KisAccountBalance, weightDict:Dict[str,
         if doc['order'] > 0:
             print(f"* 추가 매수 필요 수량: [{ticker} | {weightDict[ticker]['name']}] \t (+{doc['order']}개) 금액: {int(priceInfo[idx] * doc['order']):,}원")
         else :
-            print(f"* 매도 필요 수량: [{ticker} | {weightDict[ticker]['name']}] \t ({doc['order']}개) 금액: -{int(priceInfo[idx] * doc['order']):,}원")
+            print(f"* 매도 필요 수량: [{ticker} | {weightDict[ticker]['name']}] \t ({doc['order']}개) 금액: {int(priceInfo[idx] * doc['order']):,}원")
 
     for ticker in tickerList:
         if ticker not in taken:
