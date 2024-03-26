@@ -20,7 +20,7 @@ from prettytable import PrettyTable
 4. 공격자산 중 하나라도 모멘텀스코어가 0 이하일 경우 가장 모멘텀스코어가 높은 수비자산에 올인
 
 '''
-class Vaa():
+class Vaa:
     def __init__(self, logger:CustomLogger, startDate, endDate=None, addCash=True):
         self.logger = logger
         self.startDate = startDate# 수집 시작 날짜
@@ -55,7 +55,8 @@ class Vaa():
 
         self.vaaData = pd.concat([VOO, VEA, EEM, AGG, LQD, SHY, IEF], axis=1)
         self.vaaData.columns = self.vaaCol
-        self.logger.info(f"Completed to load Data set")
+        self.logger.info("=" * 25 + "[VAA] " + "=" * 25)
+        self.logger.info(f"* (VAA) Completed to load Data set")
 
     def getVAAWeight(self):
         # 모멘텀 스코어를 구하기
@@ -81,8 +82,8 @@ class Vaa():
             self.logger.info("* (VAA) 수비 자산 선택.")
         vaaWeight = momentumScore.apply(self.applyGetVAAWegiht, axis=1, args=(isAttack,))
 
-        self.target = vaaWeight.iloc[-1].idxmax()
-        self.logger.info(f'* (VAA) [{vaaWeight.index[-1].strftime("%Y-%m-%d")} 기준] --->> "{self.target}" 선택')
+        self.target = [(vaaWeight.iloc[-1].idxmax(), 1.0)]
+        self.logger.info(f'* (VAA) [{vaaWeight.index[-1].strftime("%Y-%m-%d")} 기준] --->> "{self.target}" 선택\n')
         return vaaWeight
 
     def applyGetVAAWegiht(self, row, isAttack):
