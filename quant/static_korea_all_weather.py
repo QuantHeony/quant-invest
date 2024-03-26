@@ -1,6 +1,6 @@
 from prettytable import PrettyTable
 from pykis import *
-from features import *
+from custom_functions import *
 
 with open("../hts-isa.txt", "r") as f:
     for line in f:
