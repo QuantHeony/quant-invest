@@ -83,17 +83,22 @@ if __name__ == "__main__":
 
 
     ORDER_FLAG = False
-
+    # 먼저 팔고, 구매 한다.
+    orderBuyList =[]
     if ORDER_FLAG:
         # 주문 or 매수
         for doc in orderList:
             ticker = doc["ticker"]
             cnt = doc["order"]
             price = doc["price"]
+
             if cnt > 0:
-                orderStock(account,ticker, cnt, price)
+                orderBuyList.append([ticker, cnt, price])
             else:
                 sellStock(account,ticker, cnt, price)
+
+        for ticker, cnt, price in orderBuyList:
+            orderStock(account,ticker, cnt, price)
 
 
 
