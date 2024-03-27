@@ -28,7 +28,6 @@ class DualMomentum:
         self.dualMCol = ['VOO', "BIL", "EFA", "AGG"]
 
         self.loadDataSet()
-        self.target = self.pickTarget()
 
 
     def loadDataSet(self):

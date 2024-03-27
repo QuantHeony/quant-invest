@@ -166,3 +166,24 @@ def sellStock(account:pykis.KisAccountScope, ticker, count, sellPrice=0):
         return account.sell(ticker, qty=count, unpr=0, dvsn='시장가')
     else :
         return account.sell(ticker, qty=count, unpr=sellPrice)
+
+
+
+'''
+해외 매수 
+'''
+def orderStockUS(account:pykis.KisAccountScope, ticker, count, orderPrice=0):
+    print(f"*매수 {ticker}, qty={count}, orderPrice={orderPrice} (0일경우 시장가)")
+    if orderPrice == 0: # 시장가
+        return account.overseas_buy(market='나스닥',code=ticker, qty=count, unpr=0, dvsn='시장가')
+    else :
+        return account.overseas_buy(market='나스닥',code=ticker, qty=count, unpr=orderPrice)
+'''
+매도
+'''
+def sellStockUS(account:pykis.KisAccountScope, ticker, count, sellPrice=0):
+    print(f"*매도 {ticker}, qty={count}, sellPrice={sellPrice} (0일경우 시장가)")
+    if sellPrice == 0: # 시장가
+        return account.overseas_sell(market='나스닥',code=ticker, qty=count, unpr=0, dvsn='시장가')
+    else :
+        return account.overseas_sell(market='나스닥',code=ticker, qty=count, unpr=sellPrice)
