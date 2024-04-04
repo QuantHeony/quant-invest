@@ -87,7 +87,7 @@ class ModifiedDualMomentum:
         else:
             self.mDualMDefenseCumReturn:pd.DataFrame = self.getDefenseCumReturn()
             lastDay = self.mDualMDefenseCumReturn.index[-1]
-            self.printWeightAsTable(self.mDualMDefenseCumReturn.round(3), self.mDualMDefenseCumReturn.columns.tolist(), f"* (Modified Dual Momentum) Attack 자산 12개월 누적 수익률")
+            self.printWeightAsTable(self.mDualMDefenseCumReturn.round(3), self.mDualMDefenseCumReturn.columns.tolist(), f"* (Modified Dual Momentum) Defense 자산 6개월 누적 수익률")
             defenseData = self.mDualMDefenseCumReturn.loc[lastDay]
             top3Indices = defenseData.nlargest(3).index.tolist()
 
