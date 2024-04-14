@@ -5,7 +5,7 @@ from strategy.vaa import Vaa
 from strategy.modified_dual_momentum import ModifiedDualMomentum
 from strategy.laa import Laa
 from prettytable import PrettyTable
-from pykis import *
+import pykis
 from custom_functions import *
 
 
@@ -53,20 +53,15 @@ if __name__ == "__main__":
     todayStr = today.strftime("%Y-%m-%d")
     startDateStr = startDate.strftime("%Y-%m-%d")
 
-    # # VOO
-    # vaa = Vaa(logger, startDateStr, todayStr)
-    # vaa.getVAAWeight()
-    # khkStrategy["VAA"]["target"] = vaa.target
-    #
-    # # LAA
-    # laa = Laa(logger, FRED_API_KEY, todayStr)
-    # laa.pickTargets()
-    # khkStrategy["LAA"]["target"] = laa.target
+    # VOO
+    vaa = Vaa(logger, startDateStr, todayStr)
+    vaa.getVAAWeight()
+    khkStrategy["VAA"]["target"] = vaa.target
 
-    # Dual Momentum
-    # dualM = DualMomentum(logger, todayStr)
-    # dualM.pickTarget()
-    # khkStrategy["DUAL"]["target"] = dualM.target
+    # LAA
+    laa = Laa(logger, FRED_API_KEY, todayStr)
+    laa.pickTargets()
+    khkStrategy["LAA"]["target"] = laa.target
 
     # Modified Dual Momentum
     modifiedDualM = ModifiedDualMomentum(logger, todayStr)
@@ -107,9 +102,9 @@ if __name__ == "__main__":
     logger.info("* 포트폴리오 티커별 목표 보유 비율")
     for ticker in PORTFOLIO_DICT:
         PORTFOLIO_DICT[ticker]["ratio"] = round(PORTFOLIO_DICT[ticker]["cumRatio"] / cnt, 3)
-        logger.info(f"* {ticker} \t" + "-" * 20 + f"{PORTFOLIO_DICT[ticker]['ratio'] * 100} %")
+        logger.info(f"* {ticker} \t" + "-" * 20 + f"{round(PORTFOLIO_DICT[ticker]['ratio'] * 100,1)} %")
 
-
+    #
     # kis = PyKis(
     #     appkey=APP_KEY,
     #     appsecret=APP_SECRET,
@@ -117,7 +112,23 @@ if __name__ == "__main__":
     #     realtime=True # 실시간 조회 비활성화
     # )
     #
-    # # 계좌 스코프를 생성한다.
+    # KEY_INFO = {
+    #     "appkey" : APP_KEY,
+    #     "appsecret" : APP_SECRET
+    # }
+    #
+    # ACCOUNT_INFO = {
+    #     "account_code": ACCOUNT_NO.split("-")[0],
+    #     "product_code": ACCOUNT_NO.split("-")[1]
+    # }
+    # # API 객체 생성
+    #
+    # api = pykis.Api(key_info=KEY_INFO, account_info=ACCOUNT_INFO)
+    # # DataFrame 형태로 해외 주식 잔고 반환
+    # stocks_os = api.get_os_stock_balance()
+
+
+    # 계좌 스코프를 생성한다.
     # account = kis.account(ACCOUNT_NO)
     # # 계좌 잔고를 조회한다.
     # balance = account.balance_all()
