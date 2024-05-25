@@ -7,7 +7,7 @@ from prettytable import PrettyTable
 VOO(미국 주식), BIL(미국 초단기 채권), 선진국 주식(EFA)
 * 안전자산: SHY(미국 단기국채), IEF(미국 중기국채), 미국 장기국채(TLT), 미국 물가연동채(TIP), 미국 회사채(LQD), 미국 하이일드(HYG), 국제 채권(BWX), 개도국 채권(EMB) 
 
-12개월 수익률 확인 
+12개월 수익률 확인 -> 6 개월로 변경
 * VOO > BIL
     * VOO와 EFA중 더 큰것 선택
 * VOO < BIL
@@ -28,7 +28,8 @@ class ModifiedDualMomentum:
             self.endDate = today
         else:
             self.endDate = datetime.strptime(endDate, "%Y-%m-%d")
-        self.aYearAgo = (self.endDate - timedelta(days=365)).strftime("%Y-%m-%d")
+        # self.aYearAgo = (self.endDate - timedelta(days=365)).strftime("%Y-%m-%d")
+        # TODO. 24.04.07 6개월로 변경
         self.sixMonthAgo = (self.endDate - timedelta(days=180)).strftime("%Y-%m-%d")
         self.mDualMDataAttack:pd.DataFrame = pd.DataFrame()
         self.mDualMDataDefense:pd.DataFrame = pd.DataFrame()
@@ -40,9 +41,9 @@ class ModifiedDualMomentum:
 
     def loadDataSet(self):
         # Attack
-        VOO = getCloseData("VOO", self.aYearAgo, self.endDate) # VOO(미국주식)
-        BIL = getCloseData("BIL", self.aYearAgo, self.endDate) # BIL(미국 초단기 채권)
-        EFA = getCloseData("EFA", self.aYearAgo, self.endDate) # EFA(선진국 주식)
+        VOO = getCloseData("VOO", self.sixMonthAgo, self.endDate) # VOO(미국주식)
+        BIL = getCloseData("BIL", self.sixMonthAgo, self.endDate) # BIL(미국 초단기 채권)
+        EFA = getCloseData("EFA", self.sixMonthAgo, self.endDate) # EFA(선진국 주식)
         # Defense
         SHY = getCloseData("SHY", self.sixMonthAgo, self.endDate) # SHY(미국 단기국채)
         IEF = getCloseData("IEF", self.sixMonthAgo, self.endDate) # IEF(미국 중기국채)

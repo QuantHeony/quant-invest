@@ -58,17 +58,17 @@ if __name__ == "__main__":
     todayStr = today.strftime("%Y-%m-%d")
     startDateStr = startDate.strftime("%Y-%m-%d")
 
-    # # VOO
+    # VOO
     vaa = Vaa(logger, startDateStr, todayStr)
     vaa.getVAAWeight()
     khkStrategy["VAA"]["target"] = vaa.target
-    #
-    # # LAA
+
+    # LAA
     laa = Laa(logger, FRED_API_KEY, todayStr)
     laa.pickTargets()
     khkStrategy["LAA"]["target"] = laa.target
 
-    # # Dual Momentum
+    # Dual Momentum
     # dualM = DualMomentum(logger, todayStr)
     # dualM.pickTarget()
     # khkStrategy["DUAL"]["target"] = dualM.target
@@ -77,6 +77,10 @@ if __name__ == "__main__":
     modifiedDualM = ModifiedDualMomentum(logger, todayStr)
     modifiedDualM.pickTarget()
     khkStrategy["MODIFIED_DUAL"]["target"] = modifiedDualM.target
+
+
+    # TODO. 주문시 체크!
+    ORDER_FLAG = False
 
     PORTFOLIO_DICT = {}
 

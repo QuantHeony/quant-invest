@@ -12,6 +12,10 @@ VOO(미국 주식), BIL(미국 초단기 채권), 선진국 주식(EFA), 미국 
 * VOO < BIL
     * AGG 투자
 '''
+# Dual Momentum
+# dualM = DualMomentum(logger, todayStr)
+# dualM.pickTarget()
+# khkStrategy["DUAL"]["target"] = dualM.target
 
 class DualMomentum:
     def __init__(self, logger:CustomLogger, endDate=None):
