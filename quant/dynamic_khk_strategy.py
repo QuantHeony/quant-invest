@@ -4,9 +4,14 @@ from custom_logger import CustomLogger
 from strategy.vaa import Vaa
 from strategy.modified_dual_momentum import ModifiedDualMomentum
 from strategy.laa import Laa
-from prettytable import PrettyTable
-from pykis import *
+import yfinance as yf
 from custom_functions import *
+from usQueryBalance import getBalance
+
+#####
+# TODO. 주문시 체크!
+ORDER_FLAG = False
+####
 
 
 with open("../hts.txt", "r") as f:
@@ -54,16 +59,16 @@ if __name__ == "__main__":
     startDateStr = startDate.strftime("%Y-%m-%d")
 
     # # VOO
-    # vaa = Vaa(logger, startDateStr, todayStr)
-    # vaa.getVAAWeight()
-    # khkStrategy["VAA"]["target"] = vaa.target
+    vaa = Vaa(logger, startDateStr, todayStr)
+    vaa.getVAAWeight()
+    khkStrategy["VAA"]["target"] = vaa.target
     #
     # # LAA
-    # laa = Laa(logger, FRED_API_KEY, todayStr)
-    # laa.pickTargets()
-    # khkStrategy["LAA"]["target"] = laa.target
+    laa = Laa(logger, FRED_API_KEY, todayStr)
+    laa.pickTargets()
+    khkStrategy["LAA"]["target"] = laa.target
 
-    # Dual Momentum
+    # # Dual Momentum
     # dualM = DualMomentum(logger, todayStr)
     # dualM.pickTarget()
     # khkStrategy["DUAL"]["target"] = dualM.target
@@ -72,10 +77,6 @@ if __name__ == "__main__":
     modifiedDualM = ModifiedDualMomentum(logger, todayStr)
     modifiedDualM.pickTarget()
     khkStrategy["MODIFIED_DUAL"]["target"] = modifiedDualM.target
-
-
-    # TODO. 주문시 체크!
-    ORDER_FLAG = False
 
     PORTFOLIO_DICT = {}
 
@@ -90,6 +91,8 @@ if __name__ == "__main__":
                 PORTFOLIO_DICT[ticker] = {
                     "name" : None,
                     "ratio" : None,
+                    "exchange" : None, # 거래소 정보 getBalance 함수 필요
+                    "price" : None,  # 현재가 getBalance 함수 필요
                     "cumRatio" : r
                 }
             else:
@@ -106,33 +109,17 @@ if __name__ == "__main__":
 
     logger.info("* 포트폴리오 티커별 목표 보유 비율")
     for ticker in PORTFOLIO_DICT:
+        etf = yf.Ticker(ticker)
         PORTFOLIO_DICT[ticker]["ratio"] = round(PORTFOLIO_DICT[ticker]["cumRatio"] / cnt, 3)
-        logger.info(f"* {ticker} \t" + "-" * 20 + f"{PORTFOLIO_DICT[ticker]['ratio'] * 100} %")
+        PORTFOLIO_DICT[ticker]["name"] = etf.info["longName"]
+        logger.info(f"* ({ticker}) {PORTFOLIO_DICT[ticker]['name']} \t" + "-" * 20 + f"{PORTFOLIO_DICT[ticker]['ratio'] * 100} %")
+
+    # 잔고 조회 및 PORTFOLIO_DICT 현재가 업데이트
+    BALANCE = getBalance(PORTFOLIO_DICT)
+    # 리밸런스 수량
+    orderList = adjustRebalancingUS(BALANCE, PORTFOLIO_DICT)
 
 
-    # kis = PyKis(
-    #     appkey=APP_KEY,
-    #     appsecret=APP_SECRET,
-    #     virtual_account=False, # 가상 계좌 여부
-    #     realtime=True # 실시간 조회 비활성화
-    # )
-    #
-    # # 계좌 스코프를 생성한다.
-    # account = kis.account(ACCOUNT_NO)
-    # # 계좌 잔고를 조회한다.
-    # balance = account.balance_all()
-    # table = PrettyTable(field_names=[
-    #     '상품번호',
-    #     '상품명',
-    #     '보유수량',
-    #     '매입금액',
-    #     '현재가',
-    #     '평가손익율',
-    #     '평가손익',
-    # ],
-    #     align='r',
-    # )
-    #
     # print(f"\n [현재 잔고 조회]")
     # print(f'예수금: {balance.dnca_tot_amt:,}원 평가금: {balance.tot_evlu_amt:,} 손익: {balance.evlu_pfls_smtl_amt:,}원')
     #
