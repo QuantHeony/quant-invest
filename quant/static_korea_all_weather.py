@@ -13,29 +13,56 @@ with open("../hts-isa.txt", "r") as f:
         elif key == 'ACCOUNTNO':
             ACCOUNT_NO = value
 
+#
+# # 11 To 4
+# KoreanAllWeather11To4 = {
+#     '360750' : {
+#         "name" : "TIGER 미국S&P500",
+#         "ratio" : 0.2
+#     },
+#     '294400' : {
+#         "name" : "KOSEF 200TR",
+#         "ratio" : 0.2
+#     },
+#     '132030' : {
+#         "name" : "KODEX 골드선물(H)",
+#         "ratio" : 0.15
+#     },
+#     '148070' :  {
+#         "name" : "KOSEF 국고채10년",
+#         "ratio" : 0.225
+#     },
+#     '305080' : {
+#         "name" : "TIGER 미국채10년선물",
+#         "ratio" : 0.225
+#     },
+# }
+#     'cash' : {
+#         "name" : "현금",
+#         "ratio" : 0.1
+#     },
 
-# 11 To 4
-KoreanAllWeather11To4 = {
+KoreanAllWeather5To10 = {
     '360750' : {
         "name" : "TIGER 미국S&P500",
         "ratio" : 0.2
     },
-    '294400' : {
-        "name" : "KOSEF 200TR",
-        "ratio" : 0.2
-    },
     '132030' : {
         "name" : "KODEX 골드선물(H)",
-        "ratio" : 0.15
+        "ratio" : 0.2
     },
     '148070' :  {
         "name" : "KOSEF 국고채10년",
-        "ratio" : 0.225
+        "ratio" : 0.3
     },
     '305080' : {
         "name" : "TIGER 미국채10년선물",
-        "ratio" : 0.225
-    }
+        "ratio" : 0.3
+    },
+    '294400' : {
+         "name" : "KOSEF 200TR",
+         "ratio" : 0
+     }
 }
 
 if __name__ == "__main__":
@@ -63,7 +90,7 @@ if __name__ == "__main__":
 
     print(f"\n [현재 잔고 조회]")
 
-    print(f'예수금: {balance.dnca_tot_amt:,}원 평가금: {balance.tot_evlu_amt:,} 손익: {balance.evlu_pfls_smtl_amt:,}원')
+    # print(f'예수금: {balance.dnca_tot_amt:,}원 평가금: {balance.tot_evlu_amt:,} 손익: {balance.evlu_pfls_smtl_amt:,}원')
 
     for stock in balance.stocks:
         table.add_row([
@@ -79,10 +106,10 @@ if __name__ == "__main__":
     print(table)
 
     # 리밸런싱 수량 확인
-    orderList = adjustRebalancing(kis, balance, KoreanAllWeather11To4)
+    orderList = adjustRebalancing(kis, balance, KoreanAllWeather5To10)
 
     # TODO. 주문시 체크!
-    ORDER_FLAG = False
+    ORDER_FLAG = True
     # 먼저 팔고, 구매 한다.
     orderBuyList =[]
     if ORDER_FLAG:
@@ -92,15 +119,17 @@ if __name__ == "__main__":
             cnt = doc["order"]
             price = doc["price"]
 
-            if cnt > 0:
+            if cnt == 0:
+                pass
+
+            elif cnt > 0:
+                if ticker == "cash": pass
                 orderBuyList.append([ticker, cnt, price])
             else:
-                sellStock(account,ticker, cnt, price)
+                sellStock(account,ticker, -cnt, price)
 
         for ticker, cnt, price in orderBuyList:
             orderStock(account,ticker, cnt, price)
-
-
 
     # FM 대로 사용 다한 임시 토큰은 삭제함.
     if kis.client.token:

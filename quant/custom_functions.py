@@ -13,7 +13,9 @@ def adjustRebalancing(kis:PyKis, balance:KisAccountBalance, weightDict:Dict[str,
     n = 0
     for ticker in weightDict:
         totalRatio += weightDict[ticker]["ratio"]
-        if weightDict[ticker]["name"] != kis.stock(str(ticker)).name:
+        if weightDict[ticker]["name"] == "현금":
+            pass
+        elif weightDict[ticker]["name"] != kis.stock(str(ticker)).name:
             raise Exception(f"[ERROR] 이름 오류 {weightDict[ticker]['name']} != {kis.stock(str(ticker)).name}")
         n+=1
     if totalRatio != 1 :
@@ -37,8 +39,12 @@ def adjustRebalancing(kis:PyKis, balance:KisAccountBalance, weightDict:Dict[str,
 
     totalResidual = 0
     for i,ticker in enumerate(tickerList):
-        stock = kis.stock(str(ticker))
-        price = stock.price().stck_prpr
+        if ticker == "cash":
+            stock = "cash"
+            price = 1
+        else :
+            stock = kis.stock(str(ticker))
+            price = stock.price().stck_prpr
         count = int(deposit * weightDict[ticker]["ratio"] / price)
         # diffCountList[i] = (deposit * weightDict[ticker]["ratio"] / price) - count
         priceInfo[i] = price
@@ -115,22 +121,26 @@ def adjustRebalancing(kis:PyKis, balance:KisAccountBalance, weightDict:Dict[str,
     orderList = []
     taken = []
     for stock in balance.stocks:
-        ticker = stock.pdno
-        idx = tickerIndexDict[ticker]
+        try :
+            ticker = stock.pdno
+            idx = tickerIndexDict[ticker]
 
-        doc = {
-            "ticker" : ticker,
-            "order" : int(bestCountList[idx] - stock.hldg_qty),
-            "price" : int(priceInfo[idx])
-        }
-        taken.append(ticker)
-        orderList.append(doc)
+            doc = {
+                "ticker" : ticker,
+                "order" : int(bestCountList[idx] - stock.hldg_qty),
+                "price" : int(priceInfo[idx])
+            }
+            taken.append(ticker)
+            orderList.append(doc)
 
-        if doc['order'] > 0:
-            print(f"* 추가 매수 필요 수량: [{ticker} | {weightDict[ticker]['name']}] \t (+{doc['order']}개) 금액: {int(priceInfo[idx] * doc['order']):,}원")
-        else :
-            print(f"* 매도 필요 수량: [{ticker} | {weightDict[ticker]['name']}] \t ({doc['order']}개) 금액: {int(priceInfo[idx] * doc['order']):,}원")
+            if doc['order'] > 0:
+                print(f"* 추가 매수 필요 수량: [{ticker} | {weightDict[ticker]['name']}] \t (+{doc['order']}개) 금액: {int(priceInfo[idx] * doc['order']):,}원")
+            else :
+                print(f"* 매도 필요 수량: [{ticker} | {weightDict[ticker]['name']}] \t ({doc['order']}개) 금액: {int(priceInfo[idx] * doc['order']):,}원")
+        except:
+            pass
 
+    cash = 0
     for ticker in tickerList:
         if ticker not in taken:
             idx = tickerIndexDict[ticker]
@@ -139,12 +149,17 @@ def adjustRebalancing(kis:PyKis, balance:KisAccountBalance, weightDict:Dict[str,
                 "order" : int(bestCountList[idx]),
                 "price" : int(priceInfo[idx])
             }
+            if ticker == "cash":
+                cash = priceInfo[idx] * int(bestCountList[idx])
             orderList.append(doc)
             taken.append(ticker)
             if doc['order'] > 0:
                 print(f"* 추가 매수 필요 수량: [{ticker} | {weightDict[ticker]['name']}] \t (+{doc['order']}개) 금액: {int(priceInfo[idx] * doc['order']):,}원")
     print("")
-    print(f"* 구매시 예수금 변화 : {balance.dnca_tot_amt:,}원 -> {int(bestDiff):,}원 ")
+    if cash > 0:
+        print(f"* 구매시 예수금 변화 : {balance.dnca_tot_amt:,}원 -> {int(bestDiff) + cash:,}원 ")
+    else :
+        print(f"* 구매시 예수금 변화 : {balance.dnca_tot_amt:,}원 -> {int(bestDiff):,}원 ")
     return orderList
 
 

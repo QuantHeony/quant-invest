@@ -5,7 +5,8 @@ from prettytable import PrettyTable
 
 ''' 
 VOO(미국 주식), BIL(미국 초단기 채권), 선진국 주식(EFA)
-* 안전자산: SHY(미국 단기국채), IEF(미국 중기국채), 미국 장기국채(TLT), 미국 물가연동채(TIP), 미국 회사채(LQD), 미국 하이일드(HYG), 국제 채권(BWX), 개도국 채권(EMB) 
+* 안전자산: SHY(미국 단기국채), IEF(미국 중기국채), 
+미국 장기국채(TLT), 미국 물가연동채(TIP), 미국 회사채(LQD), 미국 하이일드(HYG), 국제 채권(BWX), 개도국 채권(EMB) 
 
 12개월 수익률 확인 -> 6 개월로 변경
 * VOO > BIL
