@@ -10,7 +10,7 @@ from usQueryBalance import getBalance
 
 #####
 # TODO. 주문시 체크!
-ORDER_FLAG = False
+ORDER_FLAG = True
 ####
 
 
@@ -58,7 +58,7 @@ if __name__ == "__main__":
     todayStr = today.strftime("%Y-%m-%d")
     startDateStr = startDate.strftime("%Y-%m-%d")
 
-    # VOO
+    # VAA
     vaa = Vaa(logger, startDateStr, todayStr)
     vaa.getVAAWeight()
     khkStrategy["VAA"]["target"] = vaa.target
@@ -78,12 +78,7 @@ if __name__ == "__main__":
     modifiedDualM.pickTarget()
     khkStrategy["MODIFIED_DUAL"]["target"] = modifiedDualM.target
 
-
-    # TODO. 주문시 체크!
-    ORDER_FLAG = False
-
     PORTFOLIO_DICT = {}
-
     cnt = 0
     ratioValid = 0
     for strategy in khkStrategy:
@@ -110,13 +105,12 @@ if __name__ == "__main__":
     if ratioValid != 1:
         logger.info(f"[ERROR] 포트폴리오 비율 확인 필요 (비율 합:{ratioValid})")
 
-
     logger.info("* 포트폴리오 티커별 목표 보유 비율")
     for ticker in PORTFOLIO_DICT:
         etf = yf.Ticker(ticker)
         PORTFOLIO_DICT[ticker]["ratio"] = round(PORTFOLIO_DICT[ticker]["cumRatio"] / cnt, 3)
         PORTFOLIO_DICT[ticker]["name"] = etf.info["longName"]
-        logger.info(f"* ({ticker}) {PORTFOLIO_DICT[ticker]['name']} \t" + "-" * 20 + f"{PORTFOLIO_DICT[ticker]['ratio'] * 100} %")
+        logger.info(f"* ({ticker}) {PORTFOLIO_DICT[ticker]['name']} \t" + "-" * 20 + f"{round(PORTFOLIO_DICT[ticker]['ratio'] * 100,2)} %")
 
     # 잔고 조회 및 PORTFOLIO_DICT 현재가 업데이트
     BALANCE = getBalance(PORTFOLIO_DICT)
@@ -124,26 +118,77 @@ if __name__ == "__main__":
     orderList = adjustRebalancingUS(BALANCE, PORTFOLIO_DICT)
 
 
-    # print(f"\n [현재 잔고 조회]")
-    # print(f'예수금: {balance.dnca_tot_amt:,}원 평가금: {balance.tot_evlu_amt:,} 손익: {balance.evlu_pfls_smtl_amt:,}원')
-    #
-    # for stock in balance.stocks:
-    #     table.add_row([
-    #         stock.pdno,
-    #         stock.prdt_name,
-    #         f'{stock.hldg_qty:,}주',
-    #         f'{stock.pchs_amt:,}원',
-    #         f'{stock.prpr:,}원',
-    #         f'{stock.evlu_pfls_rt:.2f}%',
-    #         f'{stock.evlu_pfls_amt:,}원',
-    #     ])
-    #
-    # print(table)
-    #
-    # # 리밸런싱 수량 확인
-    # orderList = adjustRebalancing(kis, balance, PORTFOLIO_DICT)
+    for exchange in ["나스닥", "아멕스"]:
+        account = mojito.KoreaInvestment(
+            api_key=APP_KEY,
+            api_secret=APP_SECRET,
+            acc_no=ACCOUNT_NO,
+            exchange=exchange
+        )
+        balance = account.fetch_present_balance()
 
+    # 먼저 팔고, 구매 한다.
+    orderBuyList =[]
+    ACCOUNT_DICT = {}
+    if ORDER_FLAG:
+        # 주문 or 매수
+        for doc in orderList:
+            ticker = doc["ticker"]
+            cnt = doc["order"]
+            price = doc["price"]
 
+            if cnt == 0:
+                pass
 
+            elif cnt > 0:
+                if ticker == "cash": pass
+                orderBuyList.append([ticker, cnt, price])
+            else:
+                exchange = PORTFOLIO_DICT[ticker]["exchange"]
+                if not exchange :
+                    for exchange in ["나스닥", "아멕스"] :
+                        account = mojito.KoreaInvestment(
+                            api_key=APP_KEY,
+                            api_secret=APP_SECRET,
+                            acc_no=ACCOUNT_NO,
+                            exchange=exchange
+                        )
+                        ACCOUNT_DICT[exchange] = account
+                        if sellStockUS(account, ticker, -cnt, 0) != -1 : break;
+                else :
+                    if exchange not in ACCOUNT_DICT:
+                        account = mojito.KoreaInvestment(
+                            api_key=APP_KEY,
+                            api_secret=APP_SECRET,
+                            acc_no=ACCOUNT_NO,
+                            exchange=exchange
+                        )
+                        ACCOUNT_DICT[exchange] = account
+                    else :
+                        account = ACCOUNT_DICT[exchange]
+                    sellStockUS(account,ticker, -cnt, 0)
 
-
+        for ticker, cnt, price in orderBuyList:
+            exchange = PORTFOLIO_DICT[ticker]["exchange"]
+            if not exchange:
+                for exchange in ["나스닥", "아멕스"] :
+                    account = mojito.KoreaInvestment(
+                        api_key=APP_KEY,
+                        api_secret=APP_SECRET,
+                        acc_no=ACCOUNT_NO,
+                        exchange=exchange
+                    )
+                    ACCOUNT_DICT[exchange] = account
+                    if orderStockUS(account,ticker, cnt, 0) != -1 : break;
+            else :
+                if exchange not in ACCOUNT_DICT:
+                    account = mojito.KoreaInvestment(
+                        api_key=APP_KEY,
+                        api_secret=APP_SECRET,
+                        acc_no=ACCOUNT_NO,
+                        exchange=exchange
+                    )
+                    ACCOUNT_DICT[exchange] = account
+                else :
+                    account = ACCOUNT_DICT[exchange]
+                orderStockUS(account,ticker, cnt, 0)

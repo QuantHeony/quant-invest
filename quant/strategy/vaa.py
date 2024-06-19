@@ -71,15 +71,18 @@ class Vaa:
 
         momentumScore = 12*momentum1 + 4*momentum3 + 2*momentum6 + momentum12
         momentumScore.dropna(inplace=True)
-        self.printWeightAsTable(vaaDataOnRebalDate.round(), f"* (VAA) 모멘텀 스코어")
+        self.printWeightAsTable(momentumScore.round(2), f"* (VAA) 모멘텀 스코어")
 
         # 공격자산 4개 모멘텀 스코어가 전부 0 초과일 경우 가장 모멘텀스코어가 높은 공격자산에 몰빵
         # 공격자산 중 하나라도 모멘텀스코어가 0 이하일 경우 가장 모멘텀스코어가 높은 수비자산에 몰빵
         isAttack = (momentumScore[self.vaaAttack] > 0).all(axis=1)
-        if isAttack[-1]:
-            self.logger.info(f"* (VAA) 공격 자산 선택.")
-        else:
-            self.logger.info("* (VAA) 수비 자산 선택.")
+        try:
+            if isAttack[-1]:
+                self.logger.info(f"* (VAA) 공격 자산 선택.")
+            else:
+                self.logger.info("* (VAA) 수비 자산 선택.")
+        except:
+            pass
         vaaWeight = momentumScore.apply(self.applyGetVAAWegiht, axis=1, args=(isAttack,))
 
         self.target = [(vaaWeight.iloc[-1].idxmax(), 1.0)]

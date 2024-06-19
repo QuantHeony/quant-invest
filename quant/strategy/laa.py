@@ -10,7 +10,7 @@ from dateutil.relativedelta import relativedelta
 
 '''
 1) 고정자산 75%(각 25%)
-IWD(미국 대형가치주), 금(IAU), 미국 중기국채(IEF)
+IWD(미국 대형가치주), 금(GLD), 미국 중기국채(IEF)
 
 2) 타이밍 자산 25%   
 SHY(미국 단기국채) : 미국 S&P 지수 가격이 200일 이동평균선보다 낮고 미국실업률이 12개월 이동평균보다 높은 경우
@@ -74,7 +74,7 @@ class Laa():
     def pickTargets(self):
         self.logger.info("=" * 25 + "[LAA] " + "=" * 25)
         # 지속적으로 투자하는 종목들 리스트
-        self.target = [('IWD', 0.25), ('IAU', 0.25), ('IEF', 0.25)]
+        self.target = [('IWD', 0.25), ('GLD', 0.25), ('IEF', 0.25)]
 
         # 투자 자산 선정
         if self.unrateIsBad() and self.sp500IsBad():

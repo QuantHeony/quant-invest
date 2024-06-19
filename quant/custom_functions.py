@@ -6,7 +6,7 @@ from prettytable import PrettyTable
 import copy
 import numpy as np
 import mojito
-
+import pprint
 
 def adjustRebalancing(kis:PyKis, balance:KisAccountBalance, weightDict:Dict[str, Dict], bullet=None):
     # rebalancing ratio가 1인지 체크
@@ -203,6 +203,8 @@ def adjustRebalancingUS(blanceDict:dict, weightDict:Dict[str, Dict], bullet=None
         if "price" not in weightDict[ticker]:
             raise Exception(f"[ERROR] (해외) 현재가 정보가 없음. {ticker}")
         price = weightDict[ticker]["price"]
+        if ticker == "cash":
+            price = 1.0
         count = int(deposit * weightDict[ticker]["ratio"] / price)
         # diffCountList[i] = (deposit * weightDict[ticker]["ratio"] / price) - count
         priceInfo[i] = price
@@ -337,27 +339,27 @@ def sellStock(account, ticker, count, sellPrice=0):
 def orderStockUS(account:mojito.KoreaInvestment, ticker, count, orderPrice=0):
     print(f"*매수 {ticker}, qty={count}, orderPrice={orderPrice} (0일경우 시장가)")
     if orderPrice == 0: # 시장가
-        fetchPrice = account.fetch_price("ticker")
-        if 'last' in fetchPrice['output']:
+        fetchPrice = account.fetch_price(ticker)
+        if 'last' in fetchPrice['output'] and fetchPrice['output']['last'] != "" :
             currentPrice = int(round(float(fetchPrice['output']['last'])))
             print(f"조회시점 현재 가격 : {currentPrice}")
-            return account.create_limit_buy_order(symbol=ticker, price=currentPrice, quantity=count)
+            return pprint.pprint(account.create_limit_buy_order(symbol=ticker, price=currentPrice, quantity=count))
         else :
-            raise Exception(f"현재가 조회에 실패 - {fetchPrice}")
+            return -1
     else :
-        return account.create_limit_buy_order(symbol=ticker, price=orderPrice, quantity=count)
+        return pprint.pprint(account.create_limit_buy_order(symbol=ticker, price=orderPrice, quantity=count))
 '''
 매도
 '''
 def sellStockUS(account:mojito.KoreaInvestment, ticker, count, sellPrice=0):
     print(f"*매도 {ticker}, qty={count}, sellPrice={sellPrice} (0일경우 시장가)")
     if sellPrice == 0: # 시장가
-        fetchPrice = account.fetch_price("ticker")
-        if 'last' in fetchPrice['output']:
+        fetchPrice = account.fetch_price(ticker)
+        if 'last' in fetchPrice['output'] and fetchPrice['output']['last'] != "":
             currentPrice = int(round(float(fetchPrice['output']['last'])))
             print(f"조회시점 현재 가격 : {currentPrice}")
-            return account.create_limit_sell_order(symbol=ticker, price=currentPrice, quantity=count)
+            return pprint.pprint(account.create_limit_sell_order(symbol=ticker, price=currentPrice, quantity=count))
         else :
-            raise Exception(f"현재가 조회에 실패 - {fetchPrice}")
+            return -1
     else :
-        return account.create_limit_sell_order(symbol=ticker, price=sellPrice, quantity=count)
+        return pprint.pprint(account.create_limit_sell_order(symbol=ticker, price=sellPrice, quantity=count))
