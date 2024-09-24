@@ -135,7 +135,7 @@ def adjustRebalancing(kis:PyKis, balance:KisAccountBalance, weightDict:Dict[str,
             orderList.append(doc)
 
             if doc['order'] > 0:
-                print(f"* 추가 매수 필요 수량: [{ticker} | {weightDict[ticker]['name']}] \t (+{doc['order']}개) 금액: {int(priceInfo[idx] * doc['order']):,}원")
+                print(f"* 추가 매수 필요 수량: [{ticker} | {weightDict[ticker]['name']}] \t (+{doc['order']}개) 금액: {int(priceInfo[idx] * doc['order']):,}e")
             else :
                 print(f"* 매도 필요 수량: [{ticker} | {weightDict[ticker]['name']}] \t ({doc['order']}개) 금액: {int(priceInfo[idx] * doc['order']):,}원")
         except:
@@ -307,7 +307,7 @@ def adjustRebalancingUS(blanceDict:dict, weightDict:Dict[str, Dict], bullet=None
             orderList.append(doc)
             taken.append(ticker)
             if doc['order'] > 0:
-                print(f"* 추가 매수 필요 수량: [{ticker} | {weightDict[ticker]['name']}] \t (+{doc['order']}개) 금액: {int(priceInfo[idx] * doc['order']):,}원")
+                print(f"* 추가 매수 필요 수량: [{ticker} | {weightDict[ticker]['name']}] \t (+{doc['order']}개) 금액: {int(priceInfo[idx] * doc['order']):,} 달러")
     print("")
     print(f"* 구매시 예수금 변화 : {blanceDict['summary']['available']:,}달러 -> {int(bestDiff):,}달러 ")
     return orderList

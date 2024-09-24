@@ -10,7 +10,7 @@ from usQueryBalance import getBalance
 
 #####
 # TODO. 주문시 체크!
-ORDER_FLAG = True
+ORDER_FLAG = False
 ####
 
 
@@ -54,7 +54,7 @@ if __name__ == "__main__":
     logger = CustomLogger(testTimeLabel, f"log/{testTimeLabel}.txt")
 
     today = datetime.now()
-    startDate = today - timedelta(days=365)
+    startDate = today - timedelta(days=360)
     todayStr = today.strftime("%Y-%m-%d")
     startDateStr = startDate.strftime("%Y-%m-%d")
 
@@ -117,7 +117,6 @@ if __name__ == "__main__":
     # 리밸런스 수량
     orderList = adjustRebalancingUS(BALANCE, PORTFOLIO_DICT)
 
-
     for exchange in ["나스닥", "아멕스"]:
         account = mojito.KoreaInvestment(
             api_key=APP_KEY,
@@ -136,10 +135,8 @@ if __name__ == "__main__":
             ticker = doc["ticker"]
             cnt = doc["order"]
             price = doc["price"]
-
             if cnt == 0:
                 pass
-
             elif cnt > 0:
                 if ticker == "cash": pass
                 orderBuyList.append([ticker, cnt, price])

@@ -30,7 +30,7 @@ class Laa():
 
     def unrateIsBad(self):
         # 실업률 정보 파싱 시작일
-        observation_start = (self.endDate - relativedelta(months=15)).strftime('%Y-%m-01')
+        observation_start = (self.endDate - relativedelta(months=13)).strftime('%Y-%m-01')
 
         # 데이터 가져오고 정리하기
         data = self.fred.get_series('unrate', observation_start=observation_start)
@@ -50,7 +50,7 @@ class Laa():
 
     def sp500IsBad(self):
         # S&P500 정보 파싱 시작일
-        start = (self.endDate - relativedelta(months=15)).strftime('%Y-%m-%d')
+        start = (self.endDate - relativedelta(months=13)).strftime('%Y-%m-%d')
 
         # S&P500 지수 자료에 엑세스하고 시작일부터 현재까지의 자료를 가져옵니다.
         sp500 = yf.Ticker('^GSPC')

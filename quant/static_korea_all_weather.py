@@ -13,6 +13,11 @@ with open("../hts-isa.txt", "r") as f:
         elif key == 'ACCOUNTNO':
             ACCOUNT_NO = value
 
+######
+# TODO. 주문시 체크!
+ORDER_FLAG = True
+######
+
 #
 # # 11 To 4
 # KoreanAllWeather11To4 = {
@@ -108,8 +113,7 @@ if __name__ == "__main__":
     # 리밸런싱 수량 확인
     orderList = adjustRebalancing(kis, balance, KoreanAllWeather5To10)
 
-    # TODO. 주문시 체크!
-    ORDER_FLAG = True
+
     # 먼저 팔고, 구매 한다.
     orderBuyList =[]
     if ORDER_FLAG:
