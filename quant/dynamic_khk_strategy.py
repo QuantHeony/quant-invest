@@ -10,7 +10,7 @@ from usQueryBalance import getBalance
 
 #####
 # TODO. 주문시 체크!
-ORDER_FLAG = False
+ORDER_FLAG = True
 ####
 
 
@@ -54,7 +54,7 @@ if __name__ == "__main__":
     logger = CustomLogger(testTimeLabel, f"log/{testTimeLabel}.txt")
 
     today = datetime.now()
-    startDate = today - timedelta(days=360)
+    startDate = today - timedelta(days=370)
     todayStr = today.strftime("%Y-%m-%d")
     startDateStr = startDate.strftime("%Y-%m-%d")
 

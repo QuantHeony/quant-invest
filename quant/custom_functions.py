@@ -342,7 +342,7 @@ def orderStockUS(account:mojito.KoreaInvestment, ticker, count, orderPrice=0):
         fetchPrice = account.fetch_price(ticker)
         if 'last' in fetchPrice['output'] and fetchPrice['output']['last'] != "" :
             currentPrice = int(round(float(fetchPrice['output']['last'])))
-            print(f"조회시점 현재 가격 : {currentPrice}")
+            print(f"조회시점 현재 가격 : {currentPrice} 달러")
             return pprint.pprint(account.create_limit_buy_order(symbol=ticker, price=currentPrice, quantity=count))
         else :
             return -1
@@ -357,7 +357,7 @@ def sellStockUS(account:mojito.KoreaInvestment, ticker, count, sellPrice=0):
         fetchPrice = account.fetch_price(ticker)
         if 'last' in fetchPrice['output'] and fetchPrice['output']['last'] != "":
             currentPrice = int(round(float(fetchPrice['output']['last'])))
-            print(f"조회시점 현재 가격 : {currentPrice}")
+            print(f"조회시점 현재 가격 : {currentPrice} 달러")
             return pprint.pprint(account.create_limit_sell_order(symbol=ticker, price=currentPrice, quantity=count))
         else :
             return -1
