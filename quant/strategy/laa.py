@@ -43,6 +43,11 @@ class Laa():
 
         # 지난달 실업률을 검색할 기준일
         tgt_date = (self.endDate - relativedelta(months=1)).strftime('%Y-%m-01')
+        if tgt_date not in data.index:
+            tgt_date = (self.endDate - relativedelta(months=2)).strftime('%Y-%m-01')
+            self.logger.warning("*" * 60)
+            self.logger.warning(f"*** 지난달 1일 고용지표 조회 실패, {tgt_date} 기준으로 조회")
+            self.logger.warning("*" * 60)
 
         self.logger.info(f"* (LAA) 미국 실업율({round(data.loc[tgt_date,'Unrate'],3)}%) vs 12개월 실업율 이동평균({round(data.loc[tgt_date,'12SMA'],3)}%)")
 
