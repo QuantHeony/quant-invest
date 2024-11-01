@@ -10,7 +10,7 @@ from usQueryBalance import getBalance
 
 #####
 # TODO. 주문시 체크!
-ORDER_FLAG = True
+ORDER_FLAG = False
 ####
 
 

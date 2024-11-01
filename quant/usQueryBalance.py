@@ -14,7 +14,7 @@ def getBalance(PORTFOLIO_DICT = None) -> dict:
 
     BALANCE = {"stock": {},
                "dollar": {}}
-
+    exrt = None
     for exchange in ["나스닥", "아멕스"]:
         account = mojito.KoreaInvestment(
             api_key=APP_KEY,
@@ -52,6 +52,7 @@ def getBalance(PORTFOLIO_DICT = None) -> dict:
                         "exchange": exchange,
                         "profit" : float(docData['evlu_pfls_amt2'])
                     }
+                    exrt = float(docData['bass_exrt'])
 
                     # print(f"# [{idx}] ({docData['pdno']}) {docData['prdt_name']}\n")
                     # print(f"\t* 보유 수량 : {docData['cblc_qty13']}")
@@ -120,10 +121,12 @@ def getBalance(PORTFOLIO_DICT = None) -> dict:
         print(f"\t* {key}: {d[key]}")
 
     if BALANCE["dollar"]["availableWon"] > 0:
+        if "exchangeRate" not in BALANCE["dollar"]:
+            BALANCE["dollar"]["exchangeRate"] = exrt
         availableBullet += int(round(BALANCE["dollar"]["availableWon"] / BALANCE["dollar"]["exchangeRate"],0))
 
     BALANCE["summary"] = {
-        "available" : BALANCE["dollar"]["available"],
+        "available" : BALANCE["dollar"]["available"] if "available" in BALANCE["dollar"] else None,
         "evaluateTotalPrice" : totalEvaluateTotalPrice,
         "availableBullet" : availableBullet,
         "currentProfit" : totalProfit

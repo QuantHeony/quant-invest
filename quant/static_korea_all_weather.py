@@ -15,60 +15,60 @@ with open("../hts-isa.txt", "r") as f:
 
 ######
 # TODO. 주문시 체크!
-ORDER_FLAG = True
+ORDER_FLAG = False
 ######
 
 #
 # # 11 To 4
-# KoreanAllWeather11To4 = {
-#     '360750' : {
-#         "name" : "TIGER 미국S&P500",
-#         "ratio" : 0.2
-#     },
-#     '294400' : {
-#         "name" : "KOSEF 200TR",
-#         "ratio" : 0.2
-#     },
-#     '132030' : {
-#         "name" : "KODEX 골드선물(H)",
-#         "ratio" : 0.15
-#     },
-#     '148070' :  {
-#         "name" : "KOSEF 국고채10년",
-#         "ratio" : 0.225
-#     },
-#     '305080' : {
-#         "name" : "TIGER 미국채10년선물",
-#         "ratio" : 0.225
-#     },
-# }
+KoreanAllWeather11To4 = {
+    '360750' : {
+        "name" : "TIGER 미국S&P500",
+        "ratio" : 0.2
+    },
+    '294400' : {
+        "name" : "KOSEF 200TR",
+        "ratio" : 0.2
+    },
+    '132030' : {
+        "name" : "KODEX 골드선물(H)",
+        "ratio" : 0.15
+    },
+    '148070' :  {
+        "name" : "KOSEF 국고채10년",
+        "ratio" : 0.225
+    },
+    '305080' : {
+        "name" : "TIGER 미국채10년선물",
+        "ratio" : 0.225
+    },
+}
 #     'cash' : {
 #         "name" : "현금",
 #         "ratio" : 0.1
 #     },
 
-KoreanAllWeather5To10 = {
-    '360750' : {
-        "name" : "TIGER 미국S&P500",
-        "ratio" : 0.2
-    },
-    '132030' : {
-        "name" : "KODEX 골드선물(H)",
-        "ratio" : 0.2
-    },
-    '148070' :  {
-        "name" : "KOSEF 국고채10년",
-        "ratio" : 0.3
-    },
-    '305080' : {
-        "name" : "TIGER 미국채10년선물",
-        "ratio" : 0.3
-    },
-    '294400' : {
-         "name" : "KOSEF 200TR",
-         "ratio" : 0
-     }
-}
+# KoreanAllWeather5To10 = {
+#     '360750' : {
+#         "name" : "TIGER 미국S&P500",
+#         "ratio" : 0.2
+#     },
+#     '132030' : {
+#         "name" : "KODEX 골드선물(H)",
+#         "ratio" : 0.2
+#     },
+#     '148070' :  {
+#         "name" : "KOSEF 국고채10년",
+#         "ratio" : 0.3
+#     },
+#     '305080' : {
+#         "name" : "TIGER 미국채10년선물",
+#         "ratio" : 0.3
+#     },
+#     '294400' : {
+#          "name" : "KOSEF 200TR",
+#          "ratio" : 0
+#      }
+# }
 
 if __name__ == "__main__":
     kis = PyKis(
@@ -111,7 +111,7 @@ if __name__ == "__main__":
     print(table)
 
     # 리밸런싱 수량 확인
-    orderList = adjustRebalancing(kis, balance, KoreanAllWeather5To10)
+    orderList = adjustRebalancing(kis, balance, KoreanAllWeather11To4)
 
 
     # 먼저 팔고, 구매 한다.
