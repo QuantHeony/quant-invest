@@ -107,10 +107,22 @@ if __name__ == "__main__":
 
     logger.info("* 포트폴리오 티커별 목표 보유 비율")
     for ticker in PORTFOLIO_DICT:
-        etf = yf.Ticker(ticker)
         PORTFOLIO_DICT[ticker]["ratio"] = round(PORTFOLIO_DICT[ticker]["cumRatio"] / cnt, 3)
-        PORTFOLIO_DICT[ticker]["name"] = etf.info["longName"]
-        logger.info(f"* ({ticker}) {PORTFOLIO_DICT[ticker]['name']} \t" + "-" * 20 + f"{round(PORTFOLIO_DICT[ticker]['ratio'] * 100,2)} %")
+
+        # CASH는 현금이므로 특수 처리
+        if ticker.upper() == "CASH":
+            PORTFOLIO_DICT[ticker]["name"] = "현금"
+            logger.info(f"* ({ticker}) {PORTFOLIO_DICT[ticker]['name']} \t" + "-" * 20 + f"{round(PORTFOLIO_DICT[ticker]['ratio'] * 100,2)} %")
+        else:
+            try:
+                etf = yf.Ticker(ticker)
+                PORTFOLIO_DICT[ticker]["name"] = etf.info.get("longName", ticker)
+                logger.info(f"* ({ticker}) {PORTFOLIO_DICT[ticker]['name']} \t" + "-" * 20 + f"{round(PORTFOLIO_DICT[ticker]['ratio'] * 100,2)} %")
+                time.sleep(0.5)  # API rate limit 회피
+            except Exception as e:
+                logger.warning(f"* ({ticker}) yfinance 조회 실패: {e}, 티커명 그대로 사용")
+                PORTFOLIO_DICT[ticker]["name"] = ticker
+                logger.info(f"* ({ticker}) {PORTFOLIO_DICT[ticker]['name']} \t" + "-" * 20 + f"{round(PORTFOLIO_DICT[ticker]['ratio'] * 100,2)} %")
 
     # 잔고 조회 및 PORTFOLIO_DICT 현재가 업데이트
     BALANCE = getBalance(PORTFOLIO_DICT)

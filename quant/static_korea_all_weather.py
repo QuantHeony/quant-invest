@@ -26,7 +26,7 @@ KoreanAllWeather11To4 = {
         "ratio" : 0.2
     },
     '294400' : {
-        "name" : "KOSEF 200TR",
+        "name" : "KIWOOM 200TR",
         "ratio" : 0.2
     },
     '132030' : {
@@ -34,7 +34,7 @@ KoreanAllWeather11To4 = {
         "ratio" : 0.15
     },
     '148070' :  {
-        "name" : "KOSEF 국고채10년",
+        "name" : "KIWOOM 국고채10년",
         "ratio" : 0.225
     },
     '305080' : {
@@ -50,23 +50,23 @@ KoreanAllWeather11To4 = {
 # KoreanAllWeather5To10 = {
 #     '360750' : {
 #         "name" : "TIGER 미국S&P500",
-#         "ratio" : 0.2
+#         "ratio" : 0.15
 #     },
 #     '132030' : {
 #         "name" : "KODEX 골드선물(H)",
-#         "ratio" : 0.2
+#         "ratio" : 0.15
 #     },
 #     '148070' :  {
-#         "name" : "KOSEF 국고채10년",
-#         "ratio" : 0.3
+#         "name" : "KIWOOM 국고채10년",
+#         "ratio" : 0.225
 #     },
 #     '305080' : {
 #         "name" : "TIGER 미국채10년선물",
-#         "ratio" : 0.3
+#         "ratio" : 0.275
 #     },
 #     '294400' : {
-#          "name" : "KOSEF 200TR",
-#          "ratio" : 0
+#          "name" : "KIWOOM 200TR",
+#          "ratio" : 0.2
 #      }
 # }
 
